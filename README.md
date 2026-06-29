@@ -39,8 +39,8 @@ AI pipeline that turns a prompt into a Pixar-style animated short film with Span
 
 ## Examples
 
-[![Carmen](examples/thumbnails/carmen.png)](https://github.com/manxeguin/fabula/blob/main/examples/carmen.mp4?raw=true)
-[![Claudia](examples/thumbnails/claudia.png)](https://github.com/manxeguin/fabula/blob/main/examples/claudia.mp4?raw=true)
+[![Carmen](examples/thumbnails/carmen.png)](https://raw.githubusercontent.com/manxeguin/fabula/main/examples/carmen.mp4)
+[![Claudia](examples/thumbnails/claudia.png)](https://raw.githubusercontent.com/manxeguin/fabula/main/examples/claudia.mp4)
 
 | | Story | Preset | Duration |
 |---|---|---|---|
