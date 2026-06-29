@@ -1,0 +1,272 @@
+{
+  "presets": {
+    "debug": {
+      "description": "Cheapest possible models for pipeline validation only (not for output quality)",
+      "character_model": "fal-ai/flux-2/klein/9b",
+      "character_endpoint": "https://fal.run/fal-ai/flux-2/klein/9b",
+      "character_edit_model": "fal-ai/flux-2/klein/9b/edit",
+      "character_edit_endpoint": "https://fal.run/fal-ai/flux-2/klein/9b/edit",
+      "character_params": {
+        "num_images": 1,
+        "output_format": "jpeg",
+        "image_size": { "width": 512, "height": 512 }
+      },
+      "scene_model": "fal-ai/flux-2/klein/9b/edit",
+      "scene_endpoint": "https://fal.run/fal-ai/flux-2/klein/9b/edit",
+      "scene_params": {
+        "num_images": 1,
+        "output_format": "jpeg",
+        "image_size": { "width": 1024, "height": 576 }
+      },
+      "scene_image_param": "image_urls",
+      "video_model": "xai/grok-imagine-video/image-to-video",
+      "video_endpoint": "https://fal.run/xai/grok-imagine-video/image-to-video",
+      "video_params": {
+        "duration": "5"
+      },
+      "video_image_param": "image_url",
+      "video_has_prompt": true,
+      "video_has_elements": false,
+      "video_poll_sync": true,
+      "video_uses_prompt_for_audio": false,
+      "video_duration_control": true
+    },
+    "testing": {
+      "description": "Good balance for fast iteration and testing with reasonable quality",
+      "character_model": "fal-ai/nano-banana-2",
+      "character_endpoint": "https://fal.run/fal-ai/nano-banana-2",
+      "character_edit_model": "fal-ai/nano-banana-2/edit",
+      "character_edit_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "character_params": {
+        "aspect_ratio": "1:1",
+        "output_format": "png",
+        "num_images": 1,
+        "safety_tolerance": "6",
+        "resolution": "1K",
+        "limit_generations": true
+      },
+      "scene_model": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_params": {
+        "output_format": "png",
+        "num_images": 1,
+        "safety_tolerance": "6",
+        "limit_generations": true,
+        "aspect_ratio": "16:9"
+      },
+      "scene_image_param": "image_urls",
+      "video_model": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+      "video_endpoint": "https://fal.run/fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+      "video_params": {
+        "duration": "5",
+        "cfg_scale": 0.5,
+        "negative_prompt": "blur, distort, and low quality"
+      },
+      "video_image_param": "image_url",
+      "video_has_prompt": true,
+      "video_has_elements": false,
+      "video_poll_sync": true,
+      "video_uses_prompt_for_audio": false,
+      "video_duration_control": true
+    },
+    "budget": {
+      "description": "Good balance of quality and cost for production use. First-frame continuity via Kling O1 Standard.",
+      "character_model": "fal-ai/bytedance/seedream/v4/text-to-image",
+      "character_endpoint": "https://fal.run/fal-ai/bytedance/seedream/v4/text-to-image",
+      "character_edit_model": "fal-ai/nano-banana-2/edit",
+      "character_edit_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "character_params": {
+        "image_size": { "width": 2048, "height": 2048 },
+        "num_images": 1,
+        "enable_safety_checker": false
+      },
+      "scene_model": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_params": {
+        "output_format": "png",
+        "num_images": 1,
+        "safety_tolerance": "6",
+        "limit_generations": true,
+        "aspect_ratio": "16:9"
+      },
+      "scene_image_param": "image_urls",
+      "video_model": "fal-ai/kling-video/o1/standard/image-to-video",
+      "video_endpoint": "https://fal.run/fal-ai/kling-video/o1/standard/image-to-video",
+      "video_params": {
+        "duration": "5",
+        "cfg_scale": 0.5,
+        "negative_prompt": "blur, distort, and low quality"
+      },
+      "video_image_param": "start_image_url",
+      "video_has_prompt": true,
+      "video_has_elements": false,
+      "video_poll_sync": true,
+      "video_uses_prompt_for_audio": false,
+      "video_duration_control": true,
+      "video_duration_notes": "Only 5s or 10s accepted when using start_image_url"
+    },
+    "quality": {
+      "description": "Best character consistency and Pixar-quality output. Uses Kling v3 for multi-prompt/element control.",
+      "character_model": "openai/gpt-image-2",
+      "character_endpoint": "https://fal.run/openai/gpt-image-2",
+      "character_edit_model": "openai/gpt-image-2/edit",
+      "character_edit_endpoint": "https://fal.run/openai/gpt-image-2/edit",
+      "character_params": {
+        "image_size": "square",
+        "num_images": 1,
+        "output_format": "png",
+        "quality": "high"
+      },
+      "scene_model": "openai/gpt-image-2/edit",
+      "scene_endpoint": "https://fal.run/openai/gpt-image-2/edit",
+      "scene_params": {
+        "image_size": "landscape_16_9",
+        "num_images": 1,
+        "output_format": "png",
+        "quality": "high"
+      },
+      "scene_image_param": "image_urls",
+      "video_model": "fal-ai/kling-video/o1/standard/image-to-video",
+      "video_endpoint": "https://fal.run/fal-ai/kling-video/o1/standard/image-to-video",
+      "video_model_fallback": "fal-ai/kling-video/o1/image-to-video",
+      "video_endpoint_fallback": "https://fal.run/fal-ai/kling-video/o1/image-to-video",
+      "video_params": {
+        "duration": "5",
+        "cfg_scale": 0.5,
+        "negative_prompt": "blur, distort, and low quality"
+      },
+      "video_image_param": "start_image_url",
+      "video_has_prompt": true,
+      "video_has_elements": false,
+      "video_poll_sync": true,
+      "video_uses_prompt_for_audio": false,
+      "video_duration_control": true,
+      "video_duration_notes": "Only 5s or 10s when using start_image_url. 3-10s without start_image_url."
+    }
+  },
+  "camera_vocabulary": {
+    "motion": [
+      "slow push-in", "dolly left", "dolly right", "tracking shot",
+      "crane up", "crane down", "handheld", "locked-off", "orbit",
+      "slow zoom", "steadicam glide", "slow pan left", "slow pan right"
+    ],
+    "framing": [
+      "wide establishing shot", "full shot", "medium shot", "medium close-up",
+      "close-up", "extreme close-up", "over-the-shoulder", "POV", "low angle",
+      "high angle", "Dutch angle", "profile shot"
+    ],
+    "lens": [
+      "24mm wide", "35mm cinematic", "50mm normal", "85mm portrait",
+      "100mm macro", "shallow depth of field", "deep focus"
+    ],
+    "lighting": [
+      "rim light", "soft backlight", "golden hour", "blue hour",
+      "soft key light", "practical lights", "dappled light",
+      "overcast daylight", "warm tungsten", "diffused window light"
+    ]
+  },
+  "safety_notes": {
+    "nano-banana": "safety_tolerance ranges 1 (strictest) to 6 (most permissive). We use 6. However, the internal Gemini safety guardrails can still block prompts involving: violence, injury, fear/panic of minors, abandonment, crying children. If blocked, rewrite prompt to use positive framing (e.g. 'looking around with wonder' instead of 'lost and scared').",
+    "gpt-image": "No configurable safety parameter. OpenAI's internal content policy applies. Prompts involving minors in distress may be blocked. Use neutral/positive framing.",
+    "seedream": "enable_safety_checker: false disables the external checker. Internal model guardrails may still apply.",
+    "seedance": "No configurable safety parameter. Handles most story content without issues.",
+    "kling": "No safety parameter exposed. Handles most story content without issues. The cfg_scale parameter (0.5) gives models more creative freedom vs strict prompt adherence.",
+    "grok": "No configurable safety parameter. Internal xAI guardrails apply."
+  },
+  "narrator": {
+    "model": "xai/tts/v1",
+    "endpoint": "https://fal.run/xai/tts/v1",
+    "voices": {
+      "ara": { "description": "Warm, friendly — best for emotional stories, gentle narration", "gender": "female" },
+      "eve": { "description": "Energetic, upbeat — best for exciting adventures, playful tales", "gender": "female" },
+      "sal": { "description": "Smooth, balanced — best for neutral narration, calm stories", "gender": "female" }
+    },
+    "default_voice": "ara",
+    "default_language": "es-ES",
+    "price_per_1k_chars": 0.015
+  },
+  "music": {
+    "model": "sonilo/v1.1/text-to-music",
+    "endpoint": "https://fal.run/sonilo/v1.1/text-to-music",
+    "price_per_second": 0.0025,
+    "default_volume": 0.25,
+    "auto_prompt_template": "instrumental {mood} {style}, {atmosphere}, no vocals, cinematic Pixar soundtrack style, acoustic"
+  },
+  "vision": {
+    "model": "nvidia/nemotron-3-nano-omni/vision",
+    "endpoint": "https://fal.run/nvidia/nemotron-3-nano-omni/vision",
+    "price_per_1k_tokens": 0.006
+  },
+  "default": "debug",
+  "duration_limits": {
+    "debug": { "min": 3, "max": 10, "supports_first_frame": false, "description": "Grok Imagine — variable duration, no frame continuity" },
+    "testing": { "min": 5, "max": 5, "supports_first_frame": false, "description": "Kling 2.5 Turbo — fixed 5s only" },
+    "budget": { "min": 5, "max": 10, "supports_first_frame": true, "description": "Kling O1 Standard — 5s or 10s, start_image_url for continuity" },
+    "quality": { "min": 5, "max": 10, "supports_first_frame": true, "first_frame_model": "fal-ai/wan-flf2v", "first_frame_notes": "Kling O1 start_image_url = style reference only. For strict frame-to-frame continuity, use Wan FLF2V (both start+end frames, fixed 5s, \$0.40 flat)." },
+    "cinematic": { "min": 5, "max": 15, "supports_first_frame": true, "description": "Seedance 2.0 Fast — 4-15s, first/last frame, native audio" }
+  },
+  "default_durations_by_beat": {
+    "hook": 4,
+    "development_1": 7,
+    "development_2": 6,
+    "turn": 8,
+    "close": 5
+  },
+  "model_quirks": {
+    "kling_2.5_turbo": {
+      "requires_prompt": true,
+      "field": "image_url",
+      "duration": "5s only",
+      "response": "sync (returns video.url directly)",
+      "pitfalls": "Prompt field was missing in early calls — must pass motion-only prompt alongside image_url"
+    },
+    "wan_flf2v": {
+      "requires_prompt": true,
+      "field": "start_image_url + end_image_url (both mandatory)",
+      "duration": "fixed 5s (duration param ignored)",
+      "response": "sync (returns video.url directly)",
+      "price": "$0.40 flat per video",
+      "pitfalls": "Both start AND end frame images are mandatory — passing only one returns 'Field required' for end_image_url. Duration param is silently ignored — always produces 5s output. Best for short seamless transitions between two key frames."
+    },
+    "kling_o1": {
+      "requires_prompt": true,
+      "field": "start_image_url (NOT image_url)",
+      "duration": "5s or 10s only when using start_image_url",
+      "response": "sync (returns video.url directly, no polling)",
+      "price": "$0.084/s (Standard), $0.112/s (Pro)",
+      "pitfalls": "start_image_url is a CHARACTER/STYLE REFERENCE, NOT a strict first frame. The generated video does NOT start from the exact input image — it uses it for identity cues. For true frame-to-frame continuity, use Wan FLF2V instead. Using image_url (not start_image_url) returns 'Field required'."
+    },
+    "grok_imagine_video": {
+      "requires_prompt": true,
+      "field": "image_url",
+      "duration": "3-10s",
+      "response": "sync",
+      "pitfalls": "Prompt is required even for image-to-video. Missing prompt returns 'Field required'. No start_image_url support."
+    },
+    "seedance_2.0": {
+      "requires_prompt": true,
+      "field": "image_url + optional end_image_url",
+      "duration": "4-15s or 'auto'",
+      "response": "queue (async, requires polling)",
+      "pitfalls": "Duration is string ('5' not 5). Missing prompt returns 'Field required'."
+    },
+    "wan_flf2v": {
+      "requires_prompt": true,
+      "field": "start_image_url + end_image_url (both mandatory)",
+      "duration": "unknown",
+      "response": "queue",
+      "pitfalls": "Both start AND end frame images are mandatory — passing only one returns 'Field required' for end_image_url."
+    },
+    "xai_tts": {
+      "field": "text (NOT input)",
+      "pitfalls": "Using 'input' field instead of 'text' returns 'Field required'. Always use 'text'."
+    },
+    "nano_banana_2": {
+      "safety": "safety_tolerance must be string '6' not integer 6",
+      "pitfalls": "Integer 6 is rejected. Use '6' (string). limit_generations: true recommended."
+    },
+    "mp3_concat": {
+      "pitfalls": "FFmpeg concat demuxer with -c copy produces silent/corrupt MP3 files due to timestamp drift. Must use filter_complex concat with re-encode."
+    }
+  }
+}

@@ -1,0 +1,31 @@
+# Generated content
+stories/
+
+# Media outputs (in case they appear outside stories/)
+*.mp4
+*.mp3
+*.png
+*.jpg
+*.webp
+*.webm
+
+# Temporary files
+/tmp/
+*.tmp
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Secrets
+.env
+*.secret
+
+# IDE
+.idea/
+.vscode/
+tmp_seedance
