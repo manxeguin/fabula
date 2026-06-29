@@ -8,6 +8,9 @@ stories/
 *.webp
 *.webm
 
+# Example thumbnails are tracked
+!examples/thumbnails/*.png
+
 # Temporary files
 /tmp/
 *.tmp
