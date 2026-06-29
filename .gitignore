@@ -1,8 +1,7 @@
 # Generated content
 stories/
 
-# Media outputs (in case they appear outside stories/)
-*.mp4
+# Media outputs (in case they appear outside stories/ or examples/)
 *.mp3
 *.png
 *.jpg

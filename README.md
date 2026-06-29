@@ -37,6 +37,18 @@ AI pipeline that turns a prompt into a Pixar-style animated short film with Span
                        └──────────────────┘
 ```
 
+## Examples
+
+[![Carmen](examples/thumbnails/carmen.png)](https://github.com/manxeguin/fabula/blob/main/examples/carmen.mp4?raw=true)
+[![Claudia](examples/thumbnails/claudia.png)](https://github.com/manxeguin/fabula/blob/main/examples/claudia.mp4?raw=true)
+
+| | Story | Preset | Duration |
+|---|---|---|---|
+| Carmen | La niña que leyó su propia historia | quality | 38s |
+| Claudia | La Feria de Córdoba | testing | 25s |
+
+*(Click thumbnails to download videos)*
+
 ## Quick Start
 
 ```bash
