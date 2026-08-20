@@ -84,6 +84,12 @@ export FAL_API_KEY="your-fal-key"
 | `/pixar-music` | Background music — AI-generated or YouTube | `--youtube`, `--prompt`, `--start` |
 | `/pixar-merge` | Stitches all scene videos into final.mp4 | — |
 | `/pixar-list` | Lists all stories with scene status | — |
+| `/pixar-run` | Runs the full pipeline automatically from story to final video | `--auto`, `--review` |
+| `/pixar-scene` | Regenerates a single scene from feedback | `<story>/<scene> [feedback]` |
+| `/pixar-cast` | Manages the multi-character cast registry | `<story-slug>` |
+| `/pixar-background` | Generates a Pixar environment from a source photo | `<story-slug> <name>` |
+| `/pixar-mix` | Mixes narration audio with video | `--story` |
+| `/pixar-overlay` | Overlays text labels onto scene images for the storybook PDF | `<story_dir>`, `--style` |
 
 ## Agents
 
@@ -94,6 +100,7 @@ Each command is handled by an agent — the brains of the pipeline:
 | **pixar-orchestrator** | Central coordinator. Loads model configs, routes to subagents, handles retries and safety filters. |
 | **pixar-character** | Character designer. Creates the CHARACTER ANCHOR (identity contract), generates character.png from text or photo using vision model auto-description. |
 | **pixar-story-writer** | Story writer. Writes scene.md files with SCLCAM-structured visual prompts, comprehensive video prompts (7 elements), and flowing narrative-style Spanish narrations. |
+| **pixar-background** | Background designer. Transforms a real-world location photo into a Pixar 3D environment, preserving layout and spatial arrangement. |
 
 ## Presets
 
@@ -105,6 +112,7 @@ Switch cost/quality profiles via `PIPELINE_PRESET`:
 | `testing` | Nano Banana 2 | Nano Banana 2 Edit | Kling 2.5 Turbo (5s) | ~$2.23 |
 | `budget` | Seedream V4 | Nano Banana 2 Edit | Kling O1 Std (5-10s) | ~$2.18 |
 | `quality` | GPT Image 2 | GPT Image 2 Edit | Kling O1 Std (5-10s) | ~$4.50 |
+| `omni` | Nano Banana 2 | Nano Banana 2 Edit | Gemini Omni Flash (8s, audio included) | ~$3.25 |
 
 Costs are for a 5-scene story (~30s). Prices from `genmedia pricing <endpoint>`. Debug preset uses `image_urls` for scene consistency (character reference per scene). Budget and quality presets support `start_image_url` for frame continuity via last-frame extraction.
 
@@ -117,6 +125,8 @@ Costs are for a 5-scene story (~30s). Prices from `genmedia pricing <endpoint>`.
 - **CHARACTER ANCHOR** — Immutable identity block copied verbatim into every scene prompt. Prevents age/face/style drift.
 - **Comprehensive video prompts** — 7-element structure (camera, setting, lighting, atmosphere, motion, mood, style) for richer animation.
 - **Review checkpoint** — Stop after images with `/pixar-review`. Edit prompts, regenerate scenes, then proceed to videos.
+- **Storybook PDF** — `/pixar-cover` generates a cover from real character/background references; `/pixar-overlay` overlays short text labels (4 typography styles) onto scene images for a text-augmented PDF.
+- **Cost tracking** — Every FAL call is logged to `generation_log.jsonl`; `fal_cost_summary.sh` reports exact per-story cost.
 
 ## Spanish Narration Voices
 
@@ -185,6 +195,7 @@ All models used, their quirks, and pricing. Configured in `pipeline_config.json`
 | Seedance 2.0 | `bytedance/seedance-2.0/image-to-video` | $0.30/s | 4-15s | `image_url` + optional `end_image_url` | Queue-based. Native audio. Expensive. |
 | Vidu | `fal-ai/vidu/start-end-to-video` | $0.05/s | 4-10s | Both `start_image_url` + `end_image_url` required | True first→last frame. Sync. |
 | Wan FLF2V | `fal-ai/wan-flf2v` | $0.40 flat | Fixed 5s | Both `start_image_url` + `end_image_url` required | Ignores duration param. |
+| Gemini Omni Flash | `google/gemini-omni-flash/image-to-video` | ~$0.13/s | Integer, default 8s | `image_url` (treated as actual first frame, not style ref) | Reasoning-based. Audio always included. Terse 1-3 sentence prompts. Queue-based. Edit endpoint available for iterative amends. |
 
 ### Audio
 

@@ -11,8 +11,9 @@ stories/
 # Example thumbnails are tracked
 !examples/thumbnails/*.png
 
-# Temporary files
+# Temporary work dirs (variant comparison, phase experiments)
 /tmp/
+/tmp_*/
 *.tmp
 *.log
 
@@ -30,4 +31,3 @@ __pycache__/
 # IDE
 .idea/
 .vscode/
-tmp_seedance

@@ -95,6 +95,34 @@ Fast variants exist for lower latency:
 - `bytedance/seedance-2.0/fast/image-to-video`
 - `bytedance/seedance-2.0/fast/reference-to-video`
 
+### Reasoning-based video (world knowledge, terse briefs)
+
+Use Gemini Omni Flash when the brief can lean on world knowledge instead
+of enumerating visual facts. Same architectural shift as Nano Banana vs
+FLUX for images. Audio is included. Default duration 8s. No
+`negative_prompt`, no `safety_tolerance`, no `resolution` exposed.
+
+- Text to video: `google/gemini-omni-flash`
+- Image to video: `google/gemini-omni-flash/image-to-video`
+- Reference to video: `google/gemini-omni-flash/reference-to-video`
+
+Prefer when:
+- The brief references historical, scientific, or cultural concepts.
+- The user wants text rendered inside the video in sync with motion.
+- The user wants iterative conversational edits on an existing video
+  (use `google/gemini-omni-flash/edit` — Omni's signature capability).
+- Audio output is desired without a separate generation step.
+
+Avoid when:
+- Strict per-frame camera choreography is required (use Seedance or
+  Kling v3 with multi-prompt).
+- The user wants to disable audio (Omni always generates it).
+- The user is in the EEA, UK, or Switzerland AND wants iterative edits
+  on uploaded video (geographically restricted on `.../edit`).
+
+For prompt-craft details, see
+[fal-prompting/references/gemini-omni.md](../fal-prompting/references/gemini-omni.md).
+
 ### Fast or lower-cost video
 
 Use Grok Imagine Video for fast, lower-cost motion previews and economical

@@ -1,4 +1,10 @@
 {
+  "before_use_check_docs": {
+    "rule": "Before using ANY model for the first time, fetch its llms.txt to verify endpoint, parameters, prompt style, and limitations. Never assume a model works like another.",
+    "llms_url_pattern": "https://fal.ai/models/{model_id}/llms.txt",
+    "check_items": ["prompt style expectations", "max reference images", "character consistency guarantees", "safety filter config", "pricing per call", "field name (image_url vs start_image_url vs image_urls)"],
+    "models_that_lie_in_docs": ["fal-ai/flux-2-pro/edit — docs claim 9 ref images but multi-character tests failed 2/2 times. Test before trusting."]
+  },
   "presets": {
     "debug": {
       "description": "Cheapest possible models for pipeline validation only (not for output quality)",
@@ -19,6 +25,9 @@
         "image_size": { "width": 1024, "height": 576 }
       },
       "scene_image_param": "image_urls",
+      "scene_model_multi": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint_multi": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_prompt_style_multi": "declarative-long",
       "video_model": "xai/grok-imagine-video/image-to-video",
       "video_endpoint": "https://fal.run/xai/grok-imagine-video/image-to-video",
       "video_params": {
@@ -55,6 +64,9 @@
         "aspect_ratio": "16:9"
       },
       "scene_image_param": "image_urls",
+      "scene_model_multi": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint_multi": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_prompt_style_multi": "declarative-long",
       "video_model": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
       "video_endpoint": "https://fal.run/fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
       "video_params": {
@@ -90,6 +102,9 @@
         "aspect_ratio": "16:9"
       },
       "scene_image_param": "image_urls",
+      "scene_model_multi": "fal-ai/nano-banana-pro/edit",
+      "scene_endpoint_multi": "https://fal.run/fal-ai/nano-banana-pro/edit",
+      "scene_prompt_style_multi": "declarative-long",
       "video_model": "fal-ai/kling-video/o1/standard/image-to-video",
       "video_endpoint": "https://fal.run/fal-ai/kling-video/o1/standard/image-to-video",
       "video_params": {
@@ -126,6 +141,9 @@
         "quality": "high"
       },
       "scene_image_param": "image_urls",
+      "scene_model_multi": "openai/gpt-image-2/edit",
+      "scene_endpoint_multi": "https://fal.run/openai/gpt-image-2/edit",
+      "scene_prompt_style_multi": "five-section",
       "video_model": "fal-ai/kling-video/o1/standard/image-to-video",
       "video_endpoint": "https://fal.run/fal-ai/kling-video/o1/standard/image-to-video",
       "video_model_fallback": "fal-ai/kling-video/o1/image-to-video",
@@ -142,6 +160,52 @@
       "video_uses_prompt_for_audio": false,
       "video_duration_control": true,
       "video_duration_notes": "Only 5s or 10s when using start_image_url. 3-10s without start_image_url."
+    },
+    "omni": {
+      "description": "Reasoning-based video via Gemini Omni Flash. Audio is included. Terse natural-language briefs outperform verbose positional prompts. ~$0.13/s for video, audio replaces the separate xAI TTS step when narration is not needed.",
+      "character_model": "fal-ai/nano-banana-2",
+      "character_endpoint": "https://fal.run/fal-ai/nano-banana-2",
+      "character_edit_model": "fal-ai/nano-banana-2/edit",
+      "character_edit_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "character_params": {
+        "aspect_ratio": "1:1",
+        "output_format": "png",
+        "num_images": 1,
+        "safety_tolerance": "6",
+        "resolution": "1K",
+        "limit_generations": true
+      },
+      "scene_model": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_params": {
+        "output_format": "png",
+        "num_images": 1,
+        "safety_tolerance": "6",
+        "limit_generations": true,
+        "aspect_ratio": "16:9"
+      },
+      "scene_image_param": "image_urls",
+      "scene_model_multi": "fal-ai/nano-banana-2/edit",
+      "scene_endpoint_multi": "https://fal.run/fal-ai/nano-banana-2/edit",
+      "scene_prompt_style_multi": "declarative-long",
+      "video_model": "google/gemini-omni-flash/image-to-video",
+      "video_endpoint": "https://fal.run/google/gemini-omni-flash/image-to-video",
+      "video_model_fallback": "google/gemini-omni-flash",
+      "video_endpoint_fallback": "https://fal.run/google/gemini-omni-flash",
+      "video_params": {
+        "duration": 8,
+        "aspect_ratio": "16:9"
+      },
+      "video_image_param": "image_url",
+      "video_has_prompt": true,
+      "video_has_elements": false,
+      "video_poll_sync": false,
+      "video_poll_async": true,
+      "video_uses_prompt_for_audio": true,
+      "video_duration_control": true,
+      "video_prompt_style": "omni-conversational",
+      "video_duration_notes": "Default 8s. Duration is integer (NOT string). Audio is always generated; cannot be disabled.",
+      "video_audio_included": true
     }
   },
   "camera_vocabulary": {
@@ -171,7 +235,8 @@
     "seedream": "enable_safety_checker: false disables the external checker. Internal model guardrails may still apply.",
     "seedance": "No configurable safety parameter. Handles most story content without issues.",
     "kling": "No safety parameter exposed. Handles most story content without issues. The cfg_scale parameter (0.5) gives models more creative freedom vs strict prompt adherence.",
-    "grok": "No configurable safety parameter. Internal xAI guardrails apply."
+    "grok": "No configurable safety parameter. Internal xAI guardrails apply.",
+    "gemini_omni": "Same risk class as nano-banana — Gemini-family internal guardrails apply. No safety_tolerance parameter is exposed in the schema. Prompts involving minors in distress, violence, or fear may be blocked. Use positive framing as a workaround. Geo-restriction: the edit endpoint (google/gemini-omni-flash/edit) is not available for uploaded videos in the EEA, Switzerland, and the UK. T2V / I2V / R2V generation is unrestricted."
   },
   "narrator": {
     "model": "xai/tts/v1",
@@ -198,12 +263,31 @@
     "price_per_1k_tokens": 0.006
   },
   "default": "debug",
+  "generation_log": {
+    "enabled": true,
+    "file": "generation_log.jsonl",
+    "description": "Durable per-generation metadata for cost analysis and quality optimization. One JSON line per FAL API call. Written by scripts/log_gen.sh. Read by scripts/generation_report.sh and scripts/fal_cost_summary.sh.",
+    "schema": {
+      "ts": "ISO 8601 UTC timestamp",
+      "asset": "character_image | scene_image | scene_video | background_image | narration_audio | music_audio",
+      "path": "relative path within story dir",
+      "model": "endpoint ID (e.g. fal-ai/nano-banana-2/edit)",
+      "params": {"aspect_ratio": "16:9", "resolution": "1K", "safety_tolerance": "6"},
+      "input": {"prompt": "full prompt text", "refs": "number of reference images"},
+      "output": {"url": "CDN URL", "size": "bytes", "width": "px", "height": "px", "duration": "seconds for video/audio"},
+      "cost": {"unit": "image | second | megapixel", "price": "0.08"},
+      "duration_ms": "API wall-clock time in milliseconds",
+      "retries": "number of retries before success",
+      "preset": "debug | testing | budget | quality"
+    }
+  },
   "duration_limits": {
     "debug": { "min": 3, "max": 10, "supports_first_frame": false, "description": "Grok Imagine — variable duration, no frame continuity" },
     "testing": { "min": 5, "max": 5, "supports_first_frame": false, "description": "Kling 2.5 Turbo — fixed 5s only" },
     "budget": { "min": 5, "max": 10, "supports_first_frame": true, "description": "Kling O1 Standard — 5s or 10s, start_image_url for continuity" },
-    "quality": { "min": 5, "max": 10, "supports_first_frame": true, "first_frame_model": "fal-ai/wan-flf2v", "first_frame_notes": "Kling O1 start_image_url = style reference only. For strict frame-to-frame continuity, use Wan FLF2V (both start+end frames, fixed 5s, \$0.40 flat)." },
-    "cinematic": { "min": 5, "max": 15, "supports_first_frame": true, "description": "Seedance 2.0 Fast — 4-15s, first/last frame, native audio" }
+    "quality": { "min": 5, "max": 10, "supports_first_frame": true, "first_frame_model": "fal-ai/wan-flf2v", "first_frame_notes": "Kling O1 start_image_url = style reference only. For strict frame-to-frame continuity, use Wan FLF2V (both start+end frames, fixed 5s, $0.40 flat)." },
+    "cinematic": { "min": 5, "max": 15, "supports_first_frame": true, "description": "Seedance 2.0 Fast — 4-15s, first/last frame, native audio" },
+    "omni": { "min": 1, "max": 15, "supports_first_frame": true, "description": "Gemini Omni Flash — integer duration, default 8s, audio always included, image_url treated as actual first frame. Treat as approximate until validated (no enum exposed in schema)." }
   },
   "default_durations_by_beat": {
     "hook": 4,
@@ -267,6 +351,75 @@
     },
     "mp3_concat": {
       "pitfalls": "FFmpeg concat demuxer with -c copy produces silent/corrupt MP3 files due to timestamp drift. Must use filter_complex concat with re-encode."
+    },
+    "flux_prompt_length": {
+      "pitfalls": "FLUX models (Klein, Pro) expect short, single-sentence prompts (max 3 sentences). Long positional multi-subject prompts cause hallucination and character merging. Use @image1 syntax for multi-reference. Never use 200+ word prompts with FLUX."
+    },
+    "gemini_omni": {
+      "endpoints": {
+        "text-to-video": "google/gemini-omni-flash",
+        "image-to-video": "google/gemini-omni-flash/image-to-video",
+        "reference-to-video": "google/gemini-omni-flash/reference-to-video",
+        "edit": "google/gemini-omni-flash/edit"
+      },
+      "field": "image_url (NOT start_image_url)",
+      "duration": "integer (default 8, accept range — not yet enum-locked in schema)",
+      "response": "queue (async, requires polling) — assumed based on Google video family pattern; validate in Phase 3 smoke test",
+      "price": "~$0.13/s for 720p (token-based: $1.875 / 1M input tokens, $21.875 / 1M output tokens)",
+      "audio": "always generated, cannot be disabled",
+      "not_exposed": ["negative_prompt", "safety_tolerance", "resolution", "seed", "generate_audio", "cfg_scale"],
+      "edit_endpoint_geo_restriction": "EEA, Switzerland, UK — edit on uploaded videos is blocked. T2V/I2V/R2V unrestricted.",
+      "voice_editing": "not supported",
+      "reference_to_video_prompt_syntax": "<IMAGE_REF_0>, <IMAGE_REF_1>, ... inline tags (NOT @image1, NOT 'Image 1 (name)')",
+      "reference_to_video_schema_caveat": "Endpoint description mentions audio and video inputs but schema only exposes image_urls. Treat as image+text only until verified.",
+      "prompt_style": "INVERSE of other video models. Reasoning-based: terse 1-3 sentence natural-language briefs outperform verbose 7-element positional prompts. Use 'omni-conversational' prompt style (see prompt_styles section).",
+      "pitfalls": "Do NOT pass verbose Kling-style 7-element prompts. The reasoning architecture is designed to NOT need them. Do NOT re-describe outfit/hair when using image reference — text overrides the image. Do NOT try to disable audio. Do NOT combine camera vocabulary with lighting/grade adjectives — pick one signal. Do NOT request extreme slow-motion."
+    }
+  },
+  "prompt_styles": {
+    "declarative-long": {
+      "description": "Full positional description with individual character directions. Works: Nano Banana 2, Nano Banana Pro. Fails: all FLUX models.",
+      "template": "Place N distinct Pixar characters in [setting]. Image 1 ([name], [age]): [position in frame], [action], [expression]. Image 2 ([name], [age]): [position], [action], [expression]. ... [Setting details]. Disney-Pixar aesthetic, rounded plastic-like forms, subsurface scattering on skin, bright saturated color palette, cinematic lighting. N distinct characters — all different people, never clone or merge them.",
+      "max_length": "300 words",
+      "compatible_models": ["fal-ai/nano-banana-2/edit", "fal-ai/nano-banana-pro/edit"]
+    },
+    "five-section": {
+      "description": "GPT Image 2 structured template: Scene / Subject / Important details / Use case / Constraints.",
+      "template": "Scene: [setting description, framing]. Subject: [each character with position and action]. Important details: [style, lighting, proportions]. Use case: [context for the image]. Constraints: [character count, no duplicates, no text].",
+      "max_length": "250 words",
+      "compatible_models": ["openai/gpt-image-2/edit"]
+    },
+    "concise-at-syntax": {
+      "description": "Short prompt using @image1/@image2 syntax. ONE sentence max 50 words. Works: FLUX.2 Pro Edit. Fails if too long or too positional.",
+      "template": "@image1 [action] at [position], @image2 [action] at [position], @image3 [action] at [position], @image4 [action] at [position]. [Setting in 5-8 words]. [Style in 5-8 words]. [aspect ratio].",
+      "max_length": "50 words",
+      "compatible_models": ["fal-ai/flux-2-pro/edit"]
+    },
+    "single-action-concise": {
+      "description": "Minimal single-sentence edit. Max 3 sentences, 30 words. Works: FLUX.2 Klein Edit. Use only for single-character edits.",
+      "template": "[action]. [setting]. [style].",
+      "max_length": "30 words",
+      "compatible_models": ["fal-ai/flux-2/klein/9b/edit"]
+    },
+    "omni-conversational": {
+      "description": "INVERSE of all other video model prompts. Terse 1-3 sentence natural-language brief that leans on Gemini's world knowledge. Works: Gemini Omni Flash (any endpoint). Fails on every other video model in this catalog. See .opencode/skills/fal-ai-community/fal-prompting/references/gemini-omni.md.",
+      "template": "[subject] [doing what] in [setting]. [One sentence about mood or intent]. [Optional plain-English camera note: 'one continuous shot' | 'slow push-in' | 'dolly zoom' | 'static' | 'locked off'].",
+      "max_length": "80 words (target 20-40 for image-to-video)",
+      "compatible_models": ["google/gemini-omni-flash", "google/gemini-omni-flash/image-to-video", "google/gemini-omni-flash/reference-to-video"],
+      "edit_variant": "For google/gemini-omni-flash/edit: one short imperative sentence, ALWAYS append 'Keep everything else the same.' unless the intent is to redo the whole video. Max 20 words."
+    }
+  },
+  "multi_character_support": {
+    "max_characters_per_scene": 5,
+    "character_identity_rules": {
+      "distinguish_by": ["outfit color", "hairstyle", "face structure", "skin tone", "body proportions"],
+      "never_merge_identical_toddlers": "Assign distinct outfit colors or accessories if multiple toddlers share similar features",
+      "prompt_anchor": "Always label each character in prompt: 'Image 1 (NAME)', not 'the toddler'"
+    },
+    "tested_models": {
+      "reliable": ["fal-ai/nano-banana-2/edit", "fal-ai/nano-banana-pro/edit", "openai/gpt-image-2/edit"],
+      "unreliable_despite_docs": ["fal-ai/flux-2-pro/edit"],
+      "completely_fails": ["fal-ai/flux-2/klein/9b/edit"]
     }
   }
 }

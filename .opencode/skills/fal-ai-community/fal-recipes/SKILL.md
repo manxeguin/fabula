@@ -29,7 +29,7 @@ Recipes use `genmedia` for execution and `fal-models-catalog` for endpoint defau
 ## Available recipes
 
 | Reference | Use for |
-|-----------|---------|
+|-----------|--------|
 | [cinematography.md](references/cinematography.md) | Cinematic stills and video, shot language, lighting, lens, color grade |
 | [character-design.md](references/character-design.md) | Original characters with consistent identity across shots |
 | [commercial.md](references/commercial.md) | Product photography, ads, e-commerce batches, hero shots |
@@ -40,6 +40,7 @@ Recipes use `genmedia` for execution and `fal-models-catalog` for endpoint defau
 | [video-with-audio.md](references/video-with-audio.md) | Add narration / SFX / music to a silent video |
 | [product-shot.md](references/product-shot.md) | Hero product photography from a packshot reference |
 | [realism.md](references/realism.md) | Photoreal stills (candid, editorial, documentary, archival, food, nature, architectural) with an anti-AI-look checklist |
+| [gemini-omni-iterative-edit.md](references/gemini-omni-iterative-edit.md) | Conversational iterative video amends via Gemini Omni Flash Edit ("Nano Banana for video") |
 
 ## How to choose a recipe
 

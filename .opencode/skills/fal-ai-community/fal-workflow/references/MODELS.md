@@ -107,6 +107,81 @@ Detailed configuration and usage for all supported models in fal.ai workflows.
 | Veo 3.1 Fast | `fal-ai/veo3.1/fast/image-to-video` | High quality |
 | Kling 2.6 Pro | `fal-ai/kling-video/v2.6/pro/image-to-video` | **Best I2V** |
 
+### Gemini Omni Flash (Image to Video)
+
+Reasoning-based video generation with audio included. Inverse prompt style
+from Seedance/Kling — terse natural-language briefs outperform verbose
+positional prompts. See `fal-prompting/references/gemini-omni.md`.
+
+```json
+{
+  "app": "google/gemini-omni-flash/image-to-video",
+  "input": {
+    "prompt": "$node-video-prompt.output",
+    "image_url": "$node-image.images.0.url",
+    "aspect_ratio": "16:9",
+    "duration": 8
+  }
+}
+```
+
+**Output:** `$node.video`
+
+**Parameters:**
+- `prompt` - Brief natural-language description of the motion (terse — 20-40 words for I2V)
+- `image_url` - Starting frame image URL (treats the image as the actual first frame, not just a style reference)
+- `duration` - Video length in seconds (integer, default 8)
+- `aspect_ratio` - `"16:9"` or `"9:16"` (default `"16:9"`)
+
+**Audio:** Always generated. Cannot be disabled. Use `pixar-audio` after the fact only for scenes that need precise narration control.
+
+**Not exposed:** `negative_prompt`, `safety_tolerance`, `resolution`, `seed`, `generate_audio`, `cfg_scale`. Internal Gemini guardrails apply.
+
+**Best for:** Reasoning-based motion, world-knowledge scenes, audio-included output, lower-cost video with native audio. ~$0.13/s.
+
+### Gemini Omni Flash (Reference to Video)
+
+Multiple reference images with role binding via `<IMAGE_REF_N>` tags in the
+prompt. New tag syntax — different from the @image1 / "Image 1 (name)"
+patterns of FLUX.2 Pro Edit and Nano Banana 2 Edit.
+
+```json
+{
+  "app": "google/gemini-omni-flash/reference-to-video",
+  "input": {
+    "prompt": "The astronaut from <IMAGE_REF_0> walks across the surface of Mars in <IMAGE_REF_1>, leaving boot prints in the red dust. One continuous shot.",
+    "image_urls": ["$node-character.images.0.url", "$node-environment.images.0.url"],
+    "aspect_ratio": "16:9",
+    "duration": 8
+  }
+}
+```
+
+**Output:** `$node.video`
+
+**Schema caveat:** Endpoint description claims support for text + image + audio + video, but only `image_urls` is in the schema. Treat audio/video refs as experimental.
+
+### Gemini Omni Flash (Edit)
+
+Conversational iterative edit of an existing video. Pass the previous
+video's URL plus a simple amend instruction. Append "Keep everything
+else the same." to preserve the rest of the scene. Geo-restricted in
+EEA, UK, and Switzerland for uploaded videos.
+
+```json
+{
+  "app": "google/gemini-omni-flash/edit",
+  "input": {
+    "prompt": "Replace the pomegranates with apples. Keep everything else the same.",
+    "video_url": "$node-prev-video.video.url"
+  }
+}
+```
+
+**Output:** `$node.video`
+
+**Best for:** Iterative amend loops without re-running the full generation. Voice editing is not supported.
+
 
 ---
 

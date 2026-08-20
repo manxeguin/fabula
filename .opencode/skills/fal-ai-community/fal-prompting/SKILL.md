@@ -23,6 +23,7 @@ Model families have meaningful prompting nuances. A prompt that works on GPT Ima
 | [kling.md](references/kling.md) | Working with Kling video models (O3, v3), multi-prompt, element controls, Standard vs Pro tier |
 | [gpt-image-2.md](references/gpt-image-2.md) | Working with `openai/gpt-image-2` or `/edit`, structured prompts, EXACT TEXT, multi-image compositing |
 | [happy-horse.md](references/happy-horse.md) | Working with `alibaba/happy-horse/text-to-video` or `image-to-video`, brevity-first, camera language |
+| [gemini-omni.md](references/gemini-omni.md) | Working with `google/gemini-omni-flash` (any endpoint), world-knowledge briefs, terse prompts, conversational iterative edits, in-sync text rendering |
 
 ## Universal principles (all families)
 
@@ -30,7 +31,7 @@ Model families have meaningful prompting nuances. A prompt that works on GPT Ima
 2. **Style tags need visual targets.** "Minimalist brutalist" → "cream background, heavy black sans serif, asymmetrical type block, generous negative space."
 3. **One controlled variable per iteration.** Comparison only works when one axis changes at a time.
 4. **Inspect schema before assuming a control exists.** `genmedia schema <endpoint_id> --json`. Negative prompt, seed, multi-prompt, and reference-image fields differ across families.
-5. **Per-family rules override universal advice.** Happy Horse rejects what GPT Image 2 rewards.
+5. **Per-family rules override universal advice.** Happy Horse rejects what GPT Image 2 rewards. Gemini Omni is the inverse of every other video model — verbose positional prompts underperform terse world-knowledge briefs.
 
 ## Catalog cross-reference
 

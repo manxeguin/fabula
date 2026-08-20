@@ -23,6 +23,15 @@ Change a specific element while preserving motion.
 - `xai/grok-imagine-video/edit-video`: xAI · Grok Imagine Edit
 - `bytedance/seedance-2.0/reference-to-video`: ByteDance
 
+## Conversational iterative edit
+
+Amend an existing video through natural-language turns. The model
+preserves the parts that weren't changed across edits. Distinct from
+content edit (one-shot swap) — these endpoints accept many sequential
+amends.
+
+- `google/gemini-omni-flash/edit`: Google · Gemini Omni Flash Edit. Append "Keep everything else the same." to preserve the rest of the scene. Voice editing not supported. Editing uploaded videos is restricted in EEA, Switzerland, and the UK.
+
 ## Animate / replace / motion control
 
 Character animation, motion control, dreamactor.

@@ -73,6 +73,18 @@ done
 | `fal-ai/kling-video/v2.5-turbo/pro/image-to-video` | video | $0.35 |
 | `fal-ai/kling-video/v3/pro/image-to-video` | video | ~$0.75 |
 | `fal-ai/ovi/image-to-video` | video | $0.20 |
+| `google/gemini-omni-flash` | second | ~$0.13 (720p, audio included) |
+| `google/gemini-omni-flash/image-to-video` | second | ~$0.13 (720p, audio included) |
+| `google/gemini-omni-flash/reference-to-video` | second | ~$0.13 (720p, audio included) |
+| `google/gemini-omni-flash/edit` | second | ~$0.13 (720p, re-renders full video) |
+
+**Gemini Omni pricing note:** `genmedia pricing` returns a token-based
+representation (input: $1.875 / 1M tokens, output: $21.875 / 1M tokens)
+which is harder to estimate for a fixed-duration call. The model page
+footer documents the practical per-second rate: **~$0.13/s for 720p
+output, with audio included**. For 8s default duration, that's ~$1.04
+per video. A 5-scene story at 5s/scene = 25s = ~$3.25, with audio
+included (replaces the xAI TTS narration step).
 
 ## Integration with Pipeline
 

@@ -83,6 +83,10 @@ Ask only when missing information affects execution.
    - Audio-first: generate or upload audio, then plan visual shot lengths.
    - Lip-sync or talking avatar: use Fabric 1.0 or Creatify Aurora from
      `model-routing`.
+   - Storyboard input (single call): pass a sequence of keyframe images
+     to `google/gemini-omni-flash/reference-to-video` and let the model
+     animate the beats in order. Collapses multi-shot into one generation
+     — best for social stories and short ads, not for long-form narrative.
 
 5. Run long jobs async and download every result with a unique template.
 
@@ -140,6 +144,11 @@ or timeline prompting.
 - Highest quality video: `bytedance/seedance-2.0/text-to-video`,
   `bytedance/seedance-2.0/image-to-video`, or
   `bytedance/seedance-2.0/reference-to-video`.
+- Reasoning-based video (world knowledge, terse briefs, audio included):
+  `google/gemini-omni-flash`, `google/gemini-omni-flash/image-to-video`,
+  or `google/gemini-omni-flash/reference-to-video`.
+- Iterative video amend (conversational edits on existing clips):
+  `google/gemini-omni-flash/edit`.
 - Fast or lower-cost video: `xai/grok-imagine-video/text-to-video` or
   `xai/grok-imagine-video/image-to-video`.
 - Multi-shot sequence: Seedance 2.0 first, then

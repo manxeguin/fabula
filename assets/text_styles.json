@@ -1,0 +1,103 @@
+{
+  "_comment": "Typography styles for text overlay. RGBA values: [R, G, B, A] where A is 0-255.",
+
+  "storybook": {
+    "description": "Pixar Storybook — Toy Story / Up title card. Rounded bold display, white text with dark outline, soft shadow. Works on any scene.",
+    "font": "Fredoka-Variable.ttf",
+    "font_weight": 600,
+    "font_size_multiplier": 1.0,
+    "text_color": [255, 255, 255, 255],
+    "outline_color": [26, 26, 26, 255],
+    "outline_width": 3,
+    "shadow": {
+      "color": [0, 0, 0, 128],
+      "offset": [2, 3],
+      "blur": 5
+    },
+    "glow": null,
+    "background": null,
+    "rotation_deg": 0,
+    "letter_spacing_pct": 5,
+    "decorations": null
+  },
+
+  "handwritten": {
+    "description": "Handwritten Storybook — Coco / Soul vibe. Caveat Brush on cream parchment panel. Warm and personal.",
+    "font": "CaveatBrush-Regular.ttf",
+    "font_weight": 400,
+    "font_size_multiplier": 1.15,
+    "text_color": [61, 40, 23, 255],
+    "outline_color": [107, 74, 43, 200],
+    "outline_width": 1,
+    "shadow": {
+      "color": [61, 40, 23, 100],
+      "offset": [1, 2],
+      "blur": 3
+    },
+    "glow": null,
+    "background": {
+      "color": [255, 248, 231, 192],
+      "corner_radius_pct": 18
+    },
+    "rotation_deg": -1.5,
+    "letter_spacing_pct": 0,
+    "decorations": null
+  },
+
+  "movie": {
+    "description": "Pixar Movie Poster — Incredibles / Elemental. Bold display with thick outline, gradient panel, multi-layer 3D shadow. Maximum impact.",
+    "font": "Bungee-Regular.ttf",
+    "font_weight": 400,
+    "font_size_multiplier": 0.95,
+    "text_color": [255, 255, 255, 255],
+    "outline_color": [26, 26, 26, 255],
+    "outline_width": 4,
+    "shadow": {
+      "color": [0, 0, 0, 220],
+      "offset": [4, 4],
+      "blur": 0,
+      "stack": [
+        {"offset": [1, 1], "blur": 0, "color": [255, 180, 50, 220]},
+        {"offset": [3, 3], "blur": 0, "color": [230, 120, 30, 230]},
+        {"offset": [6, 6], "blur": 2, "color": [0, 0, 0, 180]}
+      ]
+    },
+    "glow": null,
+    "background": {
+      "color": [255, 200, 50, 220],
+      "corner_radius_pct": 14
+    },
+    "rotation_deg": 1.0,
+    "letter_spacing_pct": 8,
+    "decorations": null
+  },
+
+  "whimsical": {
+    "description": "Whimsical — picture-book with sparkles. Quicksand rounded sans with star/sparkle decorations. Most kid-magical feel.",
+    "font": "Quicksand-Variable.ttf",
+    "font_weight": 700,
+    "font_size_multiplier": 1.0,
+    "text_color": [255, 248, 231, 255],
+    "outline_color": [255, 181, 197, 255],
+    "outline_width": 2,
+    "shadow": {
+      "color": [0, 0, 0, 90],
+      "offset": [1, 2],
+      "blur": 4
+    },
+    "glow": {
+      "color": [255, 255, 255, 80],
+      "blur": 12
+    },
+    "background": null,
+    "rotation_deg": -1.0,
+    "letter_spacing_pct": 3,
+    "decorations": {
+      "left": "star",
+      "right": "sparkle",
+      "spacing_px": 36,
+      "color": [255, 220, 130, 255],
+      "size_pct": 70
+    }
+  }
+}

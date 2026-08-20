@@ -12,6 +12,7 @@ Final-quality video.
 - `fal-ai/kling-video/v3/pro/text-to-video`: Kling · V3 Pro
 - `fal-ai/kling-video/o3/pro/text-to-video`: Kling · O3 Pro
 - `fal-ai/minimax/hailuo-2.3/pro/text-to-video`: Minimax · Hailuo 2.3 Pro
+- `google/gemini-omni-flash`: Google · Gemini Omni Flash (reasoning-based, audio included)
 
 ## Fast / cheap drafts
 
@@ -41,6 +42,18 @@ Multi-shot / element / timeline support.
 - `bytedance/seedance-2.0/text-to-video`: ByteDance · Seedance 2.0
 - `alibaba/happy-horse/text-to-video`: Alibaba · Happy Horse
 - `fal-ai/wan/v2.7/text-to-video`: Alibaba · Wan 2.7
+- `google/gemini-omni-flash`: Google · Gemini Omni Flash (single-call storyboard input — pass a sequence of reference images)
+
+## Reasoning-based (world knowledge, conversational)
+
+Endpoints that use the model's reasoning to fill in unspecified visual
+detail. The inverse of prescriptive prompt families like Kling and Seedance.
+
+- `google/gemini-omni-flash`: Google · Gemini Omni Flash
+- `fal-ai/veo3.1`: Google · Veo 3.1 (same family, less capable)
+
+Use when the brief can lean on world knowledge ("a 1960s diner") rather
+than enumerating visual facts.
 
 ## Family-specific prompting
 
@@ -48,6 +61,7 @@ For prompt-craft details, see `fal-prompting`:
 
 - Kling family → [fal-prompting/references/kling.md](../../fal-prompting/references/kling.md)
 - Happy Horse → [fal-prompting/references/happy-horse.md](../../fal-prompting/references/happy-horse.md)
+- Gemini Omni → [fal-prompting/references/gemini-omni.md](../../fal-prompting/references/gemini-omni.md)
 
 ## Discovery
 

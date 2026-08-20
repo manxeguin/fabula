@@ -15,6 +15,7 @@ Final-quality image-to-video.
 - `fal-ai/kling-video/o3/pro/reference-to-video`: Kling · O3 Pro Reference
 - `fal-ai/sora-2/image-to-video`: OpenAI · Sora 2
 - `fal-ai/minimax/hailuo-2.3/pro/image-to-video`: Minimax · Hailuo 2.3 Pro
+- `google/gemini-omni-flash/image-to-video`: Google · Gemini Omni Flash (reasoning-based, audio included)
 
 ## Fast / cheap
 
@@ -58,6 +59,7 @@ Multiple reference images (person / style / element) → video.
 - `fal-ai/veo3.1/reference-to-video`: Google · Veo 3.1
 - `fal-ai/wan/v2.7/reference-to-video`: Alibaba · Wan 2.7
 - `fal-ai/pixverse/c1/reference-to-video`: PixVerse C1
+- `google/gemini-omni-flash/reference-to-video`: Google · Gemini Omni Flash (uses inline `<IMAGE_REF_N>` tags)
 
 ## 4K capable
 
@@ -93,6 +95,7 @@ For the multi-step TTS → lipsync recipe, see [fal-recipes/references/character
 
 - Kling → [fal-prompting/references/kling.md](../../fal-prompting/references/kling.md)
 - Happy Horse → [fal-prompting/references/happy-horse.md](../../fal-prompting/references/happy-horse.md)
+- Gemini Omni → [fal-prompting/references/gemini-omni.md](../../fal-prompting/references/gemini-omni.md)
 
 ## Discovery
 

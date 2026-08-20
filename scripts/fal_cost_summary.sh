@@ -5,6 +5,9 @@
 #
 # Requires genmedia CLI on PATH and FAL_KEY in env.
 # Counts actual generated files and queries exact pricing per endpoint.
+#
+# For model-level usage queries (e.g. "what did I spend on Kling this week?")
+# use scripts/fal_usage.sh instead — it queries the FAL Platform API per model.
 
 set -euo pipefail
 
@@ -13,6 +16,76 @@ STORY_DIR="${1:-}"
 if [ -z "$STORY_DIR" ] || [ ! -d "$STORY_DIR" ]; then
   echo "Usage: bash fal_cost_summary.sh <story_dir>" >&2
   exit 1
+fi
+
+# --- If generation_log.jsonl exists, use it (exact costs) ---
+LOG_FILE="$STORY_DIR/generation_log.jsonl"
+if [ -f "$LOG_FILE" ]; then
+  python3 -c "
+import json
+from collections import Counter
+
+entries = []
+with open('$LOG_FILE') as f:
+    for line in f:
+        if line.strip():
+            entries.append(json.loads(line))
+
+if not entries:
+    exit()
+
+def cost_of(e):
+    # Extract cost from entry, supporting both dict and float formats
+    c = e.get('cost')
+    if isinstance(c, dict):
+        return c.get('price', 0) or 0
+    if isinstance(c, (int, float)):
+        return c
+    return 0
+
+type_counts = Counter(e['asset'] for e in entries)
+model_counts = Counter(e['model'] for e in entries)
+total_cost = sum(cost_of(e) for e in entries)
+cost_by_type = {}
+for e in entries:
+    t = e['asset']
+    cost_by_type[t] = cost_by_type.get(t, 0) + cost_of(e)
+
+# Video total
+video_s = sum(e['output'].get('duration', 5) for e in entries if e['asset'] == 'scene_video')
+
+preset = entries[0].get('preset','?')
+
+print()
+print(f'  Cost Summary — {preset} preset')
+print('  ' + '-' * 48)
+for t in ['character_image', 'background_image', 'scene_image', 'scene_video', 'narration_audio', 'music_audio', 'text_overlay']:
+    c = type_counts.get(t, 0)
+    if c > 0:
+        label = t.replace('_', ' ').title()
+        print(f'  {label:25s} \${cost_by_type.get(t, 0):>8.4f}  ({c} assets)')
+
+print('  ' + '-' * 48)
+print(f'  TOTAL                            \${total_cost:>8.4f}')
+print()
+print('  Models:')
+for m in sorted(set(e['model'] for e in entries)):
+    print(f'    {m}')
+print()
+
+# Resolution summary
+resolutions = Counter()
+for e in entries:
+    o = e.get('output', {})
+    w = o.get('width'); h = o.get('height')
+    if w and h:
+        resolutions[f'{w}x{h}'] += 1
+if resolutions:
+    print('  Output specs:')
+    for r, c in resolutions.most_common():
+        print(f'    {r:20s} x{c}')
+"
+  exit 0
 fi
 
 GENMEDIA="${GENMEDIA_BIN:-$(which genmedia 2>/dev/null || echo "$HOME/.genmedia/bin/genmedia")}"

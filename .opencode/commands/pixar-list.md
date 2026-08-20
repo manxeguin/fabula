@@ -1,6 +1,7 @@
 ---
 description: List all Pixar stories and their scene status
 agent: pixar-orchestrator
+subtask: true
 ---
 List all Pixar stories and show their scene generation status.
 

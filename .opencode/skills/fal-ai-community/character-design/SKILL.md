@@ -133,9 +133,21 @@ words.
   expression prompts.
 - Character video: approved still frame first, then
   `bytedance/seedance-2.0/image-to-video` for final quality.
+- Character video with reasoning-based motion and audio included:
+  `google/gemini-omni-flash/image-to-video`. Distinct from Kling O1's
+  `start_image_url` (which is a style/identity reference, not a strict
+  first frame) — Omni's `image_url` treats the input as the actual first
+  frame and the model preserves identity through the animation. Apply
+  the character anchor in the prompt; rely on the reference image to
+  carry appearance (don't re-describe outfit/hair in text).
 - Fast video drafts: use `xai/grok-imagine-video/image-to-video`.
 - Talking avatar or lip-sync: use `veed/fabric-1.0`,
   `veed/fabric-1.0/text`, or `fal-ai/creatify/aurora`.
+- Iterative character edits on existing video: `google/gemini-omni-flash/edit`
+  accepts conversational amend instructions ("change her shirt to red",
+  "make her smile wider") while preserving the rest of the scene. EEA,
+  UK, and Switzerland are geo-restricted on this endpoint for uploaded
+  video.
 
 ## Quality bar
 

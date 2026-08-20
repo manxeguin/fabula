@@ -93,7 +93,8 @@ Ask only for what affects the shot:
 
 ## Prompt build order
 
-Use the SCLCAM structure:
+Use the SCLCAM structure as a default, but **route prompts to the
+selected model's preferred style** before applying it.
 
 1. Subject: who or what is in frame.
 2. Context: location, time, weather, story moment.
@@ -103,13 +104,40 @@ Use the SCLCAM structure:
 6. Mood/color: palette, contrast, grade, exposure style.
 7. Output controls: aspect ratio, duration, first-frame continuity.
 
-Example structure:
+Example structure (SCLCAM, default for Seedance / Kling v3 / Veo 3.1):
 
 ```text
 [subject] in [context], framed as [shot size and angle], [lens feel],
 [lighting setup], [camera movement if video], [color grade], [texture],
 [duration or aspect ratio], [continuity constraints]
 ```
+
+### Gemini Omni variant (terse world-knowledge brief)
+
+For `google/gemini-omni-flash/*` endpoints, the inverse rule applies.
+Omni's reasoning architecture rewards natural-language briefs that lean
+on world knowledge. The SCLCAM structure adds noise here — strip it
+down to a 1-3 sentence scene description with an optional plain-English
+camera note.
+
+```text
+[subject] [doing what] in [setting]. [One sentence about mood or intent].
+[Optional camera note: "one continuous shot", "slow push-in", "dolly zoom", etc.]
+```
+
+For detailed Gemini Omni prompting, see
+[fal-prompting/references/gemini-omni.md](../fal-prompting/references/gemini-omni.md).
+
+### Gemini Omni camera vocabulary (named directions)
+
+Omni recognizes specific camera terms as named directions. Use them
+isolated, never combined with lighting/grade adjectives:
+
+- **Continuous shot / oner**: "one continuous shot", "oner", "single take"
+- **Push / pull**: "push in", "punch in", "pull back", "pull out"
+- **Dolly effects**: "dolly zoom" (vertigo effect), "dolly in", "dolly out"
+- **Static / locked**: "static", "locked off", "fixed camera"
+- **Movement style**: "natural smartphone zoom", "film camera", "webcam style"
 
 ## Model routing
 
@@ -119,7 +147,14 @@ Example structure:
 - Fast draft still: use `fal-ai/flux-2/klein/9b`.
 - Highest quality video: use `bytedance/seedance-2.0/text-to-video` or
   `bytedance/seedance-2.0/image-to-video`.
-- Motion from a strong frame: use `bytedance/seedance-2.0/image-to-video`.
+- Reasoning-based video (world knowledge, terse briefs, audio included):
+  use `google/gemini-omni-flash`, `google/gemini-omni-flash/image-to-video`,
+  or `google/gemini-omni-flash/reference-to-video`. SCLCAM-style verbose
+  prompts underperform here — use a 1-3 sentence natural-language brief
+  instead.
+- Motion from a strong frame: use `bytedance/seedance-2.0/image-to-video`,
+  or `google/gemini-omni-flash/image-to-video` for the reasoning-based
+  variant.
 - Fast or lower-cost video: use `xai/grok-imagine-video/text-to-video` or
   `xai/grok-imagine-video/image-to-video`.
 - Complex camera language: inspect Seedance 2.0 first, then Kling v3 when

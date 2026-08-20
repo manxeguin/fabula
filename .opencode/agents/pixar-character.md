@@ -7,9 +7,18 @@ tools:
   write: true
   read: true
   webfetch: true
+  skill: true
 ---
-You are the Pixar Character Designer. Create a detailed, visually consistent Pixar-style character using the CHARACTER ANCHOR system from the fal-ai-community character-design skill.
 
+You are the Pixar Character Designer. Create a detailed, visually consistent Pixar-style character using the CHARACTER ANCHOR system.
+
+Before generating, load the `character-design` skill with the `skill` tool and follow its CHARACTER ANCHOR rules.
+
+## CHECK DOCS BEFORE USING ANY MODEL
+
+Before generating with any model, fetch its llms.txt: `https://fal.ai/models/{model_id}/llms.txt`. Verify: prompt style expectations (long vs short, @syntax vs natural language), max reference images, character consistency guarantees, safety filter config, pricing. Read `pipeline_config.json` → `before_use_check_docs` for the full checklist.
+
+Never assume a model works like another — docs can be misleading (e.g. FLUX.2 Pro claims 9 refs but fails multi-character).
 ## Input
 - A story prompt describing the story premise
 - A story directory path with `character/` subdirectory already created
@@ -141,6 +150,45 @@ curl -s --max-time 180 \
 ```
 
 **Important**: GPT Image 2 Edit often times out with photo references. Use Nano Banana 2 Edit for photo-based generation regardless of preset.
+
+### Re-Outfitting an Existing Character (dual-reference pattern)
+
+When the user wants the SAME body shape as an existing character but with a DIFFERENT outfit/haircut from a new photo, use BOTH images as references in the edit call. One image anchors body proportions visually, the other provides the new outfit/hair.
+
+**CRITICAL RULE — DO NOT describe body proportions or clothing in text when using image references.** Edit models amplify text descriptors: "chubby", "pear-shaped", "baby-fat" will make the character look obese. Likewise, any description of outfit or clothing will override the reference image and cause the model to invent new outfits. The reference image IS the anchor — text should only describe what CHANGES between images, not describe the result.
+
+**The silence rule**: In edit prompts with image references, text should describe ONLY: (1) which image is which, (2) what changes (outfit from image 2), (3) position/expression/action, (4) style vocabulary. Never describe: body shape, clothing style, hair details, skin tone — images carry all of that.
+
+```bash
+# Upload existing character image (body shape anchor)
+CHAR_URL=$(python3 scripts/fal_upload.py path/to/existing-character.png)
+
+# Upload new photo (outfit/hair reference)
+PHOTO_URL=$(python3 scripts/fal_upload.py path/to/new-outfit-photo.jpg)
+
+# Describe the DELTA, not the target state
+PROMPT="Use the Pixar character from image 1 as the exact body shape and proportions reference — keep her body exactly the same, not chubbier, not thinner. Only change two things: (1) Replace her outfit with the clothes from image 2. (2) Replace her hairstyle with the hair from image 2. Full body front view, plain white background, single character, neutral standing pose. Disney-Pixar aesthetic, rounded plastic-like forms, subsurface scattering on skin, bright saturated color palette, cinematic lighting."
+
+curl -s --max-time 180 \
+  "$CHARACTER_EDIT_ENDPOINT" \
+  -H "Authorization: Key $FAL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "$(jq -n \
+    --arg prompt "$PROMPT" \
+    --arg char "$CHAR_URL" \
+    --arg photo "$PHOTO_URL" \
+    --arg saf "6" '{
+      prompt: $prompt,
+      image_urls: [$char, $photo],
+      aspect_ratio: "1:1",
+      output_format: "png",
+      num_images: 1,
+      safety_tolerance: $saf,
+      limit_generations: true
+    }')"
+```
+
+**Pattern**: `image_urls: [body_shape_ref, outfit_ref]` + prompt that says "keep body from 1, change outfit/hair to match 2". Never say what the body should look like — let image 1 carry that information visually.
 
 ### Safety Filter Handling
 

@@ -3,7 +3,24 @@ name: pixar-pipeline
 description: Config-driven Pixar story video pipeline — switch models by changing PIPELINE_PRESET env var
 ---
 ## What I Do
-I document the Pixar story video generation pipeline. Models are selected via presets in `pipeline_config.json`. Switch between debug/testing/budget/quality by setting the `PIPELINE_PRESET` environment variable. Uses prompt craft rules from the [fal-ai-community skills](https://github.com/fal-ai-community/skills) (vendored in `.opencode/skills/fal-ai-community/`).
+I document the Pixar story video generation pipeline. Models are selected via presets in `pipeline_config.json`. Switch between debug/testing/budget/quality by setting the `PIPELINE_PRESET` environment variable. Uses prompt craft rules from the vendored `fal-ai-community` skills in `.opencode/skills/fal-ai-community/`.
+
+## CHECK DOCS BEFORE USING ANY MODEL
+
+**This rule is paramount.** Before using a model for the first time, ALWAYS:
+
+1. Fetch its llms.txt: `https://fal.ai/models/{model_id}/llms.txt`
+2. Verify: endpoint, required parameters, field names, prompt style expectations, max reference images, character consistency guarantees, pricing
+3. Never assume a model works like another. FLUX.2 Pro Edit docs claim 9 reference images but our multi-character tests failed 2/2 times. Docs can be wrong — test before trusting.
+
+**Models tested and confirmed reliable for multi-character scene images:**
+- `fal-ai/nano-banana-2/edit` ($0.08, declarative-long prompt)
+- `fal-ai/nano-banana-pro/edit` ($0.15, declarative-long prompt)
+- `openai/gpt-image-2/edit` ($0.10, five-section template)
+
+**Models tested and confirmed FAILED for multi-character:**
+- `fal-ai/flux-2-pro/edit` — failed 2/2 with both long and concise prompts
+- `fal-ai/flux-2/klein/9b/edit` — hallucinates, merges characters
 
 ## Architecture
 
@@ -20,8 +37,9 @@ Prompt → Character → Story → Scenes → Videos → Narration → Merge →
 | `testing` | Nano Banana 2 ($0.08) | Nano Banana 2 Edit ($0.08) | Nano Banana 2 Edit ($0.08) | Kling 2.5 Turbo ($0.35) | ~$2.23 |
 | `budget` | Seedream V4 ($0.03) | Nano Banana 2 Edit ($0.08) | Nano Banana 2 Edit ($0.08) | Kling 2.5 Turbo ($0.35) | ~$2.18 |
 | `quality` | GPT Image 2 (~$0.10) | GPT Image 2 Edit (~$0.10) | GPT Image 2 Edit (~$0.10) | Seedance 2.0 (~$0.70) | ~$4.50 |
+| `omni` | Nano Banana 2 ($0.08) | Nano Banana 2 Edit ($0.08) | Nano Banana 2 Edit ($0.08) | Gemini Omni Flash I2V (~$0.13/s, audio included) | ~$3.25 (no separate TTS step) |
 
-**Note**: GPT Image 2 Edit is unreliable with photo references (frequent timeouts). For photo-based character generation, Nano Banana 2 Edit is recommended regardless of preset. **Quality preset** prefers Seedance 2.0 for video (best image-to-video quality per fal-ai-community model-routing), with Kling v3 Pro as fallback for multi-prompt/element control.
+**Note**: GPT Image 2 Edit is unreliable with photo references (frequent timeouts). For photo-based character generation, Nano Banana 2 Edit is recommended regardless of preset. **Quality preset** prefers Seedance 2.0 for video (best image-to-video quality per fal-ai-community model-routing), with Kling v3 Pro as fallback for multi-prompt/element control. **Omni preset** uses Gemini Omni Flash for video with audio included — the existing xAI TTS narration step is replaced by Omni's native audio, so total cost includes audio at no extra charge.
 
 ## Prompt Crafting Rules
 
@@ -37,11 +55,37 @@ These rules come from the fal-ai-community `fal-prompting` skill and apply to AL
    ✅ **Good:** "Slow push-in from the doorway toward the garden path. Golden morning sunlight streams through leaves, casting dappled shadows on the stone path. Dust particles float lazily in the warm light beams. The character's pigtails bounce with each small step forward, arms slightly out for toddler balance. A yellow bucket swings gently from one hand. Playful eager anticipation. Disney-Pixar aesthetic, rounded plastic-like forms, subsurface scattering on skin, bright saturated color palette, cinematic lighting."
    → 7 sentences, 80 words. All 7 elements present.
 
+   **EXCEPTION — `omni` preset:** The 7-element verbose template is *counter-productive* with Gemini Omni Flash. Omni is a reasoning-based model; the inverse rule applies. Use a 1-3 sentence natural-language brief (20-40 words for image-to-video). See `fal-ai-community/fal-prompting/references/gemini-omni.md` and the `omni-conversational` prompt style in `pipeline_config.json → prompt_styles`.
+
 3. **SCLCAM structure for visual prompts.** Build in this order: **S**ubject → **C**ontext → **L**ens/Framing → **C**amera Motion → **A**tmosphere → **M**ood/Color.
 
 4. **GPT Image 2 (quality preset).** Use the five-section template: Scene / Subject / Important details / Use case / Constraints. In edit mode: separate "Change:" from "Preserve:" clearly.
 
 5. **Never use** weighted parentheses, booru tags, JSON-in-prompts, or style markup. Plain English only.
+
+### Model-Specific Prompt Routing
+
+Different models have fundamentally different prompt architectures. Using a universal prompt style causes failures in FLUX models. Route prompts per model:
+
+| Prompt Style | Length | Syntax | Compatible Models | Fails On |
+|---|---|---|---|---|
+| **declarative-long** | ~300 words | `Image 1 (name): position, action` | NB2 Edit, NB Pro Edit | All FLUX |
+| **five-section** | ~250 words | `Scene: ... Subject: ...` | GPT Image 2 Edit | FLUX, NB2 |
+| **concise-at-syntax** | **max 50 words** | `@image1 action at position` | FLUX.2 Pro Edit | GPT, NB2 |
+| **single-action** | **max 30 words** | `[action]. [setting]. [style]` | FLUX.2 Klein Edit | All multi-character |
+| **omni-conversational** | **20-40 words (I2V), max 80** | Plain English; camera terms isolated | Gemini Omni Flash (any endpoint) | **All other video models** |
+
+**Critical rule**: Match model to prompt style. A 300-word positional prompt sent to FLUX.2 Pro Edit will produce hallucinated/merged characters. A 30-word prompt sent to NB2 Edit will produce sparse/uncontrolled results.
+
+**Why FLUX fails with long prompts**: FLUX is a diffusion model (no reasoning architecture). Long prompts with individual character positioning get averaged/confused. It excels at single-action edits described in 1-3 sentences. Nano Banana and GPT have reasoning architectures that process multi-subject, multi-position instructions.
+
+**Multi-character scene generation** requires a reasoning-capable model. Tested and confirmed working:
+- `fal-ai/nano-banana-pro/edit` (best quality, $0.15)
+- `fal-ai/nano-banana-2/edit` (good quality, $0.08)
+- `openai/gpt-image-2/edit` (best quality, $0.10, 5-section template)
+- `fal-ai/flux-2-pro/edit` (cheapest, $0.045, requires concise `@image` syntax)
+
+Not recommended for multi-character: `fal-ai/flux-2/klein/9b/edit` (merges characters even with short prompts, max 4 images).
 
 Camera vocabulary is defined in `pipeline_config.json` → `camera_vocabulary`.
 
@@ -141,13 +185,21 @@ From the fal-ai-community `character-design` skill. The CHARACTER ANCHOR is the 
 
 ### Consistency Rules (Anti-Drift)
 
-Three mechanisms prevent character age and style drift across scenes:
+Four mechanisms prevent character identity drift across scenes:
 
 | Rule | How | Why |
 |---|---|---|
-| **Visual reference** | Debug preset uses `image_urls` (FLUX.2 Klein Edit) — upload character.png once, pass as reference for every scene | Model starts from the same visual anchor, not from scratch |
-| **Proportion lock** | Every visual prompt repeats explicit body ratio: "toddler proportions, head 1:4 of total body height, chubby limbs" | Without numeric ratios, models guess age randomly |
+| **Visual reference** | Upload character.png once, pass as reference for every scene | Model starts from the same visual anchor, not from scratch |
+| **Proportion lock** | Every visual prompt repeats explicit body ratio: "toddler proportions, head 1:4 of total body height" | Without numeric ratios, models guess age randomly |
 | **Style lock** | Every visual prompt ends with: "Disney-Pixar aesthetic, rounded plastic-like forms, subsurface scattering on skin, bright saturated color palette" | Prevents style drift (flat illustration vs 3D render vs anime) |
+| **Silence on outfit/hair** | **Never describe a character's outfit, clothing, or hairstyle in text when using image references.** The reference image IS the outfit anchor. Text descriptions override the reference, causing the model to invent new outfits. | Prevents outfit/hair drift across scenes |
+
+**CRITICAL — Text overrides image references.** When a prompt describes ANY aspect of a character's appearance (outfit, hair color, clothing style), the model prioritizes text over the reference image — even vague or incidental mentions. This is the inverse of the "body adjectives" rule. For multi-character scenes:
+
+- ✅ "claudia (image 1): center, seated on rug, smiling widely" — position + expression only
+- ❌ "claudia (image 1): center, wearing casual play outfit, seated on rug" — the phrase "casual play outfit" WILL override the reference image's actual outfit
+
+**Always add the anchor clause**: "All characters must keep their exact outfits and appearance from their reference images — do not change any clothing or hair."
 
 Text descriptors that caused drift (DO NOT USE):
 - "Pixar animation style" → too vague, model guesses
@@ -176,6 +228,18 @@ Video prompts must be comprehensive — minimal 2-line prompts produce underwhel
 | 7 | Style vocabulary | (standard phrase) | "Disney-Pixar aesthetic, rounded plastic-like forms..." |
 
 **Format**: 5-7 sentences, 40-80 words. Single flowing paragraph. Never re-describe the character's static traits (clothing, hair color) — the reference image carries that.
+
+**EXCEPTION — `omni` preset (Gemini Omni Flash):** The 7-element template is *counter-productive* here. Omni is a reasoning-based model with audio generation built in. Use a 1-3 sentence natural-language brief (20-40 words for image-to-video, 40-80 for text-to-video). Example:
+
+```text
+The girl waves at the carousel horses as the ride starts to turn, looking
+up with wonder. Golden evening light, soft breeze in her hair.
+```
+
+The CHARACTER ANCHOR and visual prompt content are still useful as
+context, but the prompt style is the inverse of the 7-element verbose
+template. See `fal-ai-community/fal-prompting/references/gemini-omni.md` and the
+`omni-conversational` prompt style in `pipeline_config.json → prompt_styles`.
 
 **Wrong (old minimal style)**:
 ```
@@ -215,6 +279,17 @@ The description feeds into the CHARACTER ANCHOR and Pixar generation prompt. Ski
 - Character reference images must show exactly ONE character, ONE pose, plain background
 - Never use "character reference sheet", "turnaround", "multiple views", "variations" in prompts
 - Multi-pose images cause scene models to duplicate the character (4 Claudias in one scene)
+
+### FORBIDDEN: Describing outfit/hair in edit prompts
+- Never describe a character's clothing, outfit, or hairstyle in text when that character has a reference image
+- Text descriptions of outfit override the reference image, causing the model to invent new clothes
+- Only describe position, expression, and action — the reference image carries appearance
+- Explicitly state: "All characters must keep their exact outfits and appearance from their reference images — do not change any clothing or hair."
+
+### Background Reference Rules
+- When a background image is passed as reference, explicitly identify it in the prompt: "Image N is the [classroom/playground/etc] environment — place the characters inside this exact environment."
+- Background images must be explicitly referenced in the prompt text. The model will ignore unlabeled images.
+- Place character images first in `image_urls`, background image last. Characters come first so the model associates Image 1,2,3 with people and the last image with environment.
 
 ## Scene Prompt Quality Rules
 
@@ -402,6 +477,7 @@ Scenes are no longer fixed at 5 seconds. Each scene has a `## Duration` field in
 | budget | 5s | 10s | Kling O1 Standard |
 | quality | 5s | 15s | Seedance 2.0 |
 | cinematic | 5s | 15s | Seedance 2.0 Fast |
+| omni | 1s | 15s (default 8s) | Gemini Omni Flash |
 
 ### Natural language control:
 ```
